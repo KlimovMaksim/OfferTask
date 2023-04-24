@@ -20,8 +20,6 @@ public class Message {
         this.offer = offer;
     }
 
-    public Message(String trace_id, Offer offer) {
-        this.trace_id = trace_id;
-        this.offer = offer;
+    public Message() {
     }
 }
