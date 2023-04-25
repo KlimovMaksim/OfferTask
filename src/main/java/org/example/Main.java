@@ -63,17 +63,20 @@ public class Main {
                 hasTrigger = false;
                 event = scanner.nextLine();
                 message = objectMapper.readValue(event, Message.class);
-                if (offers[Integer.parseInt(message.getOffer().getId()) - 1].priceUpdate(message.getOffer().getPrice())){
+                if (offers[Integer.parseInt(message.getOffer().getId()) - 1].
+                        priceUpdate(message.getOffer().getPrice())){
                     if (offers[Integer.parseInt(message.getOffer().getId()) - 1].triggerSet.contains("price")) {
                         hasTrigger = true;
                     }
                 }
-                if (offers[Integer.parseInt(message.getOffer().getId()) - 1].stock_countUpdate(message.getOffer().getStock_count())) {
+                if (offers[Integer.parseInt(message.getOffer().getId()) - 1].
+                        stock_countUpdate(message.getOffer().getStock_count())) {
                     if (offers[Integer.parseInt(message.getOffer().getId()) - 1].triggerSet.contains("stock_count")) {
                         hasTrigger = true;
                     }
                 }
-                if (offers[Integer.parseInt(message.getOffer().getId()) - 1].partner_countUpdate(message.getOffer().getPartner_count())){
+                if (offers[Integer.parseInt(message.getOffer().getId()) - 1].
+                        partner_contentUpdate(message.getOffer().getPartner_content())){
                     if (offers[Integer.parseInt(message.getOffer().getId()) - 1].triggerSet.contains("partner_count")){
                         hasTrigger = true;
                     }

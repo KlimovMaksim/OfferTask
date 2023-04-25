@@ -2,7 +2,6 @@ package org.example;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import java.util.HashSet;
 import java.util.Objects;
 
@@ -13,7 +12,7 @@ public class Offer {
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = IntegerFilter.class)
     private int stock_count; // Items left on stocks, value in range from 0 to 109
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private PartnerCount partner_count; // Object partner
+    private PartnerContent partner_content; // Object partner
     @JsonIgnore
     public HashSet<String> triggerSet; // Set of trigger fields
     @JsonIgnore
@@ -51,11 +50,11 @@ public class Offer {
     public void setStock_count(int stock_count) {
         this.stock_count = stock_count;
     }
-    public PartnerCount getPartner_count() {
-        return partner_count;
+    public PartnerContent getPartner_content() {
+        return partner_content;
     }
-    public void setPartner_count(PartnerCount partner_count) {
-        this.partner_count = partner_count;
+    public void setPartner_content(PartnerContent partner_content) {
+        this.partner_content = partner_content;
     }
 
     public boolean priceUpdate(int newPrice){
@@ -78,29 +77,24 @@ public class Offer {
         }
     }
 
-    public boolean partner_countUpdate(PartnerCount newPartner_count){
-        if (newPartner_count == null) {
+    public boolean partner_contentUpdate(PartnerContent newPartner_content){
+        if (newPartner_content == null) {
             return false;
         }
-        else if (this.partner_count == null){
-            this.partner_count = newPartner_count;
+        else if (this.partner_content == null){
+            this.partner_content = newPartner_content;
             return true;
         }
-        if (this.partner_count.titleUpdate(newPartner_count.getTitle()) || this.partner_count.descriptionUpdate(newPartner_count.getDescription())){
-            return true;
-        }
-        else {
-            return false;
-        }
+        return this.partner_content.titleUpdate(newPartner_content.getTitle()) || this.partner_content.descriptionUpdate(newPartner_content.getDescription());
     }
 
-    private class PartnerCount {
+    private class PartnerContent {
         @JsonInclude(JsonInclude.Include.NON_NULL)
         private String title; // Offer title filled in by the partner
         @JsonInclude(JsonInclude.Include.NON_NULL)
         private String description; // Offer description filled in by partner
 
-        // геттеры и сеттеры для private полей класса PartnerCount
+        // геттеры и сеттеры для private полей класса PartnerContent
         public String getTitle() {
             return title;
         }
@@ -114,7 +108,7 @@ public class Offer {
             this.description = description;
         }
 
-        public PartnerCount() {
+        public PartnerContent() {
         }
 
         public boolean titleUpdate(String newTitle){
@@ -142,6 +136,6 @@ public class Offer {
 class IntegerFilter{
     @Override
     public boolean equals(Object obj) {
-        return new Integer(-1).equals(obj);
+        return Integer.valueOf(-1).equals(obj);
     }
 }
