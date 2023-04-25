@@ -1,24 +1,23 @@
 package org.example;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.HashSet;
 import java.util.Objects;
 
 public class Offer {
-    // Offer identifier, only numerical symbols are allowed
-    private String id;
-    // Offer price, value in range from 0 to 109
-    private int price;
-    // Items left on stocks, value in range from 0 to 109
-    private int stock_count;
-    // Object partner
-    private PartnerCount partner_count;
+    private String id; // Offer identifier, only numerical symbols are allowed
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = IntegerFilter.class)
+    private int price; // Offer price, value in range from 0 to 109
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = IntegerFilter.class)
+    private int stock_count; // Items left on stocks, value in range from 0 to 109
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private PartnerCount partner_count; // Object partner
     @JsonIgnore
-    // Set of trigger fields
-    public HashSet<String> triggerSet;
-    // Set of shipment fields
-    public HashSet<String> shipmentSet;
+    public HashSet<String> triggerSet; // Set of trigger fields
+    @JsonIgnore
+    public HashSet<String> shipmentSet; // Set of shipment fields
 
     public Offer() {
         this.price = -1;
@@ -27,6 +26,8 @@ public class Offer {
 
     public Offer(String id, int triggerCount, int shipmentCount) {
         this.id = id;
+        this.price = -1;
+        this.stock_count = -1;
         this.triggerSet = new HashSet<>(triggerCount);
         this.shipmentSet = new HashSet<>(shipmentCount);
     }
@@ -58,7 +59,7 @@ public class Offer {
     }
 
     public boolean priceUpdate(int newPrice){
-        if (this.price == newPrice){
+        if (this.price == newPrice || newPrice == -1){
             return false;
         }
         else{
@@ -68,7 +69,7 @@ public class Offer {
     }
 
     public boolean stock_countUpdate(int newStock_count){
-        if (this.stock_count == newStock_count){
+        if (this.stock_count == newStock_count || newStock_count == -1){
             return false;
         }
         else {
@@ -78,7 +79,13 @@ public class Offer {
     }
 
     public boolean partner_countUpdate(PartnerCount newPartner_count){
-        if (newPartner_count == null) { return false; }
+        if (newPartner_count == null) {
+            return false;
+        }
+        else if (this.partner_count == null){
+            this.partner_count = newPartner_count;
+            return true;
+        }
         if (this.partner_count.titleUpdate(newPartner_count.getTitle()) || this.partner_count.descriptionUpdate(newPartner_count.getDescription())){
             return true;
         }
@@ -88,10 +95,10 @@ public class Offer {
     }
 
     private class PartnerCount {
-        // Offer title filled in by the partner
-        private String title;
-        // Offer description filled in by partner
-        private String description;
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        private String title; // Offer title filled in by the partner
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        private String description; // Offer description filled in by partner
 
         // геттеры и сеттеры для private полей класса PartnerCount
         public String getTitle() {
@@ -111,7 +118,7 @@ public class Offer {
         }
 
         public boolean titleUpdate(String newTitle){
-            if (Objects.equals(this.title, newTitle)){
+            if (Objects.equals(this.title, newTitle) || newTitle == null){
                 return false;
             }
             else{
@@ -121,7 +128,7 @@ public class Offer {
         }
 
         public boolean descriptionUpdate(String newDescription){
-            if (Objects.equals(this.description, newDescription)){
+            if (Objects.equals(this.description, newDescription) || newDescription == null){
                 return false;
             }
             else{
@@ -129,5 +136,12 @@ public class Offer {
                 return true;
             }
         }
+    }
+}
+
+class IntegerFilter{
+    @Override
+    public boolean equals(Object obj) {
+        return new Integer(-1).equals(obj);
     }
 }

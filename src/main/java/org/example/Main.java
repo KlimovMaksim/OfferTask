@@ -7,7 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Main {
     public static void main(String[] args) {
+        long timer = System.currentTimeMillis();
         startLogic();
+        System.out.println((System.currentTimeMillis() - timer) / 1000.0);
     }
 
     private static void startLogic(){
@@ -58,6 +60,7 @@ public class Main {
 
             // считываем данные json запросов из следующих requestCount строк
             for (int i = 0; i < requestCount; i++){
+                hasTrigger = false;
                 event = scanner.nextLine();
                 message = objectMapper.readValue(event, Message.class);
                 if (offers[Integer.parseInt(message.getOffer().getId()) - 1].priceUpdate(message.getOffer().getPrice())){
@@ -69,6 +72,15 @@ public class Main {
                     if (offers[Integer.parseInt(message.getOffer().getId()) - 1].triggerSet.contains("stock_count")) {
                         hasTrigger = true;
                     }
+                }
+                if (offers[Integer.parseInt(message.getOffer().getId()) - 1].partner_countUpdate(message.getOffer().getPartner_count())){
+                    if (offers[Integer.parseInt(message.getOffer().getId()) - 1].triggerSet.contains("partner_count")){
+                        hasTrigger = true;
+                    }
+                }
+                if (hasTrigger){
+                    message.setOffer(offers[Integer.parseInt(message.getOffer().getId()) - 1]);
+                    System.out.println(objectMapper.writeValueAsString(message));
                 }
             }
 
