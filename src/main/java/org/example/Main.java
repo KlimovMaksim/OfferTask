@@ -1,6 +1,7 @@
 package org.example;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -83,7 +84,7 @@ public class Main {
                 }
                 if (hasTrigger){
                     message.setOffer(offers[Integer.parseInt(message.getOffer().getId()) - 1]);
-                    System.out.println(objectMapper.writeValueAsString(message));
+                    printInFile(objectMapper.writeValueAsString(message));
                 }
             }
 
@@ -91,5 +92,16 @@ public class Main {
         catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void printInFile(String output) {
+        try (FileWriter writer = new FileWriter("src/main/resources/output.txt", true)) {
+            writer.write(output + "\n");
+            writer.flush();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }
